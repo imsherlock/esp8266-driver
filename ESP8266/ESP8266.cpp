@@ -73,7 +73,7 @@ bool ESP8266::dhcp(bool enabled, int mode)
         return false;
     }
 
-    return _parser.send("AT+CWDHCP=%d,%d", enabled?1:0, mode)
+    return _parser.send("AT+CWDHCP=%d,%d", mode, enabled ? 1 : 0)
         && _parser.recv("OK");
 }
 
