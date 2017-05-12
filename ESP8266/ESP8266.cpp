@@ -192,6 +192,17 @@ bool ESP8266::dhcps(const char *start_ip, const char *end_ip, int lease_time, bo
         && _parser.recv("OK");
 }
 
+bool ESP8266::ap_ip_options(bool dhcp, const char *ip, const char *netmask, const char *gateway)
+{
+    if (!(_parser.send("AT+CWDHCP=0,%d", dhcp ? 1 : 0)
+       && _parser.recv("OK"))) {
+        return false;
+    }
+
+    return _parser.send("AT+CIPAP=\"%s\",\"%s\",\"%s\"", ip, gateway, netmask)
+        && _parser.recv("OK");
+}
+
 bool ESP8266::open(const char *type, int id, const char* addr, int port)
 {
     //IDs only 0-4

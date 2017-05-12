@@ -154,6 +154,18 @@ public:
      */
     bool dhcps(const char *start_ip, const char *end_ip, int lease_time = 2880, bool enable = true);
 
+
+    /**
+     * Sets the IP options for soft AP mode.
+     *
+     * @param dhcp Enable or disable DHCP for AP mode.
+     * @param ip The IPv4 address for the AP.
+     * @param netmask The IPv4 netmask for the network.
+     * @param gateway The IPv4 gateway for the network.
+     * @return Returns true on successful execution of the command, false otherwise.
+     */
+    bool ap_ip_options(bool dhcp, const char *ip, const char *netmask, const char *gateway);
+
     /**
     * Open a socketed connection
     *
