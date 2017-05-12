@@ -116,6 +116,17 @@ public:
             const char *pass = NULL);
 
     /**
+     * Sets the IP options for soft AP.
+     *
+     * @param dhcp Enable or disable DHCP.
+     * @param ip (optional) The IPv4 address if DHCP is disabled.
+     * @param netmask (optional) The IPv4 netmask of the network if DHCP is disabled.
+     * @param gateway (optional) The IPV4 gateway of the network if DHCP is disabled.
+     * @return Returns 0 on success, -errno otherwise.
+     */
+    int set_ap_options(bool dhcp, const char *ip = NULL, const char *netmask = NULL, const char *gateway = NULL);
+
+    /**
      * Set the AP options for DHCP server.
      *
      * @param enable Enable or disable the DHCP server for the AP.
@@ -332,6 +343,9 @@ private:
         nsapi_security_t sec;
         uint8_t ch;
         char pass[64]; /* The longest allowed passphrase */
+        char ip[16]; /* Static IPv4 address if not DHCP */
+        char netmask[16];
+        char gateway[16];
     } _sta, _ap;
 
     struct {

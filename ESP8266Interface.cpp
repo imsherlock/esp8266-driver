@@ -168,6 +168,24 @@ int ESP8266Interface::set_ap_credentials(const char *ssid, uint8_t channel, nsap
     return 0;
 }
 
+int ESP8266Interface::set_ap_options(bool dhcp, const char *ip, const char *netmask, const char *gateway)
+{
+    if (!_esp.ap_ip_options(dhcp, ip, netmask, gateway)) {
+        return NSAPI_ERROR_DEVICE_ERROR;
+    }
+
+    memset(_ap.ip, 0, sizeof(_ap.ip));
+    strncpy(_ap.ip, ip, sizeof(_ap.ip));
+
+    memset(_ap.netmask, 0, sizeof(_ap.netmask));
+    strncpy(_ap.netmask, netmask, sizeof(_ap.netmask));
+
+    memset(_ap.gateway, 0, sizeof(_ap.gateway));
+    strncpy(_ap.gateway, gateway, sizeof(_ap.gateway));
+
+    return 0;
+}
+
 int ESP8266Interface::set_ap_dhcp_options(bool enable, const char *start_ip, const char *end_ip, int lease_time)
 {
     if (enable == true &&
