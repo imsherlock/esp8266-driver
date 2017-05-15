@@ -154,6 +154,14 @@ public:
      */
     bool dhcps(const char *start_ip, const char *end_ip, int lease_time = 2880, bool enable = true);
 
+    /**
+     * Enable or disable the TCP server on the given port.
+     *
+     * @param enable Flag used to enable or disable the TCP server.
+     * @param port The port number to listen to for connections (default is 333).
+     * @param timeout The timeout value in seconds to wait for on connections (default is 90).
+     */
+    bool tcpserver(bool enable, int port = 333, int timeout = 90);
 
     /**
      * Sets the IP options for soft AP mode.
@@ -252,6 +260,13 @@ private:
     } *_packets, **_packets_end;
     void _packet_handler();
     bool recv_ap(nsapi_wifi_ap_t *ap);
+
+    /* TCP server */
+    void _tcpsrv_open_handler();
+    void _tcpsrv_close_handler();
+    struct {
+        bool connected[5];
+    } _tcpsrv_conf;
 
     char _ip_buffer[16];
     char _gateway_buffer[16];

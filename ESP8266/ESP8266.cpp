@@ -51,6 +51,19 @@ bool ESP8266::startup(int mode)
 
     _parser.oob("+IPD", this, &ESP8266::_packet_handler);
 
+    /* for incoming connections to the TCP server */
+    _parser.oob("0,CONNECT", this, &ESP8266::_tcpsrv_open_handler);
+    _parser.oob("1,CONNECT", this, &ESP8266::_tcpsrv_open_handler);
+    _parser.oob("2,CONNECT", this, &ESP8266::_tcpsrv_open_handler);
+    _parser.oob("3,CONNECT", this, &ESP8266::_tcpsrv_open_handler);
+    _parser.oob("4,CONNECT", this, &ESP8266::_tcpsrv_open_handler);
+
+    _parser.oob("0,CLOSED", this, &ESP8266::_tcpsrv_open_handler);
+    _parser.oob("1,CLOSED", this, &ESP8266::_tcpsrv_open_handler);
+    _parser.oob("2,CLOSED", this, &ESP8266::_tcpsrv_open_handler);
+    _parser.oob("3,CLOSED", this, &ESP8266::_tcpsrv_open_handler);
+    _parser.oob("4,CLOSED", this, &ESP8266::_tcpsrv_open_handler);
+
     return success;
 }
 
@@ -192,6 +205,21 @@ bool ESP8266::dhcps(const char *start_ip, const char *end_ip, int lease_time, bo
         && _parser.recv("OK");
 }
 
+bool ESP8266::tcpserver(bool enable, int port, int timeout)
+{
+    if (!(_parser.send("AT+CIPMUX=1")
+        && _parser.recv("OK")
+        && _parser.send("AT+CIPSERVER=%d,%d", enable, port)
+        && _parser.recv("OK")
+        && _parser.send("AT+CIPSTO=%d", timeout)
+        && _parser.recv("OK")))
+    {
+        return false;
+    }
+
+    return true;
+}
+
 bool ESP8266::ap_ip_options(bool dhcp, const char *ip, const char *netmask, const char *gateway)
 {
     if (!(_parser.send("AT+CWDHCP=0,%d", dhcp ? 1 : 0)
@@ -260,6 +288,32 @@ void ESP8266::_packet_handler()
     // append to packet list
     *_packets_end = packet;
     _packets_end = &packet->next;
+}
+
+void ESP8266::_tcpsrv_open_handler()
+{
+    int id;
+
+    _parser.recv("%d,CONNECT", &id);
+
+    if (id > 4) {
+        return;
+    }
+
+    _tcpsrv_conf.connected[id] = true;
+}
+
+void ESP8266::_tcpsrv_close_handler()
+{
+    int id;
+
+    _parser.recv("%d,CLOSED", &id);
+
+    if (id > 4) {
+        return;
+    }
+
+    _tcpsrv_conf.connected[id] = false;
 }
 
 int32_t ESP8266::recv(int id, void *data, uint32_t amount)
