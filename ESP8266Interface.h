@@ -137,6 +137,22 @@ public:
      */
     int set_ap_dhcp_options(bool enable, const char *start_ip = NULL, const char *end_ip = NULL, int lease_time = 2880);
 
+    /**
+     * Starts the TCP server.
+     *
+     * @param port (optional) The port number to listen on for incoming TCP connections (default 80).
+     * @param timeout (optional) The timeout for closing incoming connections (default 1440).
+     * @return Returns NSAPI_ERROR_OK on success, error otherwise.
+     */
+    int start_tcp_server(int port = 80, int timeout = 1440);
+
+    /**
+     * Stops the TCP server.
+     *
+     * @return Returns NSAPI_ERROR_OK on success, error otherwise.
+     */
+    int stop_tcp_server();
+
     /** Set the WiFi network credentials
      *
      *  @param ssid      Name of the network to connect to

@@ -208,6 +208,24 @@ int ESP8266Interface::set_ap_dhcp_options(bool enable, const char *start_ip, con
     return 0;
 }
 
+int ESP8266Interface::start_tcp_server(int port, int timeout)
+{
+    if (!_esp.tcpserver(true, port, timeout)) {
+        return NSAPI_ERROR_DEVICE_ERROR;
+    }
+
+    return NSAPI_ERROR_OK;
+}
+
+int ESP8266Interface::stop_tcp_server()
+{
+    if (!_esp.tcpserver(false, 0, 0)) {
+        return NSAPI_ERROR_DEVICE_ERROR;
+    }
+
+    return NSAPI_ERROR_OK;
+}
+
 int ESP8266Interface::set_credentials(const char *ssid, const char *pass, nsapi_security_t security)
 {
     memset(_sta.ssid, 0, sizeof(_sta.ssid));
